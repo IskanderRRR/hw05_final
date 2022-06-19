@@ -95,4 +95,3 @@ class FollowViewsTests(TestCase):
                                    kwargs={'username': author.username}))
         response = (self.authorized_client.get(reverse('posts:follow_index')))
         self.assertNotContains(response, self.post.text)
-    
