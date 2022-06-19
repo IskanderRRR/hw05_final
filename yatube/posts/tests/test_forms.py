@@ -73,7 +73,7 @@ class PostFormTest(TestCase):
         post = Post.objects.first()
 
         self.assertEqual(post.image, 'posts/test.jpg',)
-        
+
     def test_create_group_post(self):
         posts_count = Post.objects.count()
         form_data = {
