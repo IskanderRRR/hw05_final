@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Group, Post
+from .models import Comment, Follow, Group, Post
 
 CONS = '-пусто-'
 
@@ -29,3 +29,7 @@ class GroupAdmin(admin.ModelAdmin):
         'description',
     )
     empty_value_display = CONS
+
+
+admin.site.register(Follow)
+admin.site.register(Comment)

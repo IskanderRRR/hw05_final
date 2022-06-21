@@ -28,5 +28,5 @@ class PostModelTest(TestCase):
 
     def test_post_name_is_correct(self):
         post = PostModelTest.post
-        expected_object_name = post.text
+        expected_object_name = post.text[:15]
         self.assertEqual(expected_object_name, str(post))

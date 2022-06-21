@@ -10,10 +10,6 @@ from ..models import Group, Post
 
 User = get_user_model()
 
-REDIRECT_LOGIN_CREATE = '/auth/login/?next=/create/'
-REDIRECT_LOGIN_EDIT = '/auth/login/?next=/posts/1/edit/'
-REDIRECT_POST_DETAIL = '/posts/1/'
-
 
 class PostURLTests(TestCase):
     @classmethod
@@ -39,13 +35,23 @@ class PostURLTests(TestCase):
             group=self.group
         )
 
+        id = self.post.id
+
+        self.REDIRECT_LOGIN_CREATE = '/auth/login/?next=/create/'
+        self.REDIRECT_LOGIN_EDIT = f'/auth/login/?next=/posts/{id}/edit/'
+        self.REDIRECT_POST_DETAIL = f'/posts/{id}/'
+        self.REDIRECT_LOGIN_FOLLOW = '/auth/login/?next=/follow/'
+
     def test_urls_for_unauthorised_users(self):
         page_url_names = {
             '/': HTTPStatus.OK,
             f'/group/{self.group.slug}/': HTTPStatus.OK,
             f'/profile/{self.user.username}/': HTTPStatus.OK,
             f'/posts/{self.post.id}/': HTTPStatus.OK,
-            '/unexisting_page/': HTTPStatus.NOT_FOUND
+            '/unexisting_page/': HTTPStatus.NOT_FOUND,
+            '/follow/': HTTPStatus.FOUND,
+            f'/profile/{self.user.username}/follow/': HTTPStatus.FOUND,
+            f'posts/{self.post.id}/comment/': HTTPStatus.NOT_FOUND,
         }
         for page, expected_status in page_url_names.items():
             with self.subTest(page=page):
@@ -68,6 +74,7 @@ class PostURLTests(TestCase):
             'posts/profile.html': f'/profile/{self.user.username}/',
             'posts/group_list.html': f'/group/{self.group.slug}/',
             'posts/create_post.html': '/create/',
+            'posts/follow.html': '/follow/',
         }
         for template, adress in templates_url_names.items():
             with self.subTest(adress=adress):
@@ -81,9 +88,17 @@ class PostURLTests(TestCase):
     def test_urls_redirect(self):
         client_url_redirect = [
             [self.guest_client, reverse(
-                'posts:post_create'), REDIRECT_LOGIN_CREATE],
-            [self.guest_client, '/posts/1/edit/', REDIRECT_LOGIN_EDIT],
-            [self.authorized_client2, '/posts/1/edit/', REDIRECT_POST_DETAIL]
+                'posts:post_create'), self.REDIRECT_LOGIN_CREATE],
+            [self.guest_client, f'/posts/{self.post.id}/edit/',
+             self.REDIRECT_LOGIN_EDIT],
+            [self.authorized_client2, f'/posts/{self.post.id}/edit/',
+             self.REDIRECT_POST_DETAIL],
+            [self.guest_client, reverse(
+                'posts:follow_index'), self.REDIRECT_LOGIN_FOLLOW],
+            [self.authorized_client2, reverse('posts:add_comment',
+                                              kwargs={'post_id': self.post.id}
+                                              ), reverse('posts:post_detail',
+                                                         args=[self.post.pk])]
         ]
         for client, url, redirect_url in client_url_redirect:
             with self.subTest(url=url):

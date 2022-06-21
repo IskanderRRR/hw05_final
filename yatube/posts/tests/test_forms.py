@@ -176,7 +176,6 @@ class PostFormTest(TestCase):
             data=form_data,
             follow=True
         )
-        # Comment will appear in the page for post detail
         last_comment = response.context['comments'][0]
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(Comment.objects.count(), comment_count + 1)

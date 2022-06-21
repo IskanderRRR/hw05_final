@@ -30,9 +30,9 @@ class CacheTest(TestCase):
 
     def test_cache_index_page(self):
         first_view = self.authorized_client.get(reverse('posts:index'))
-        post_1 = Post.objects.get(pk=1)
-        post_1.text = 'Changed text'
-        post_1.save()
+        post_first = Post.objects.get(id=self.post.id)
+        post_first.text = 'Changed text'
+        post_first.save()
         second_view = self.authorized_client.get(reverse('posts:index'))
         self.assertEqual(first_view.content, second_view.content)
         cache.clear()

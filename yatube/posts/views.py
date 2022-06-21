@@ -4,8 +4,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
-from .forms import PostForm, CommentForm
-from .models import Group, Post, User, Comment, Follow
+from .forms import CommentForm, PostForm
+from .models import Comment, Follow, Group, Post, User
 
 CACHE = settings.CACHING_TIME
 POSTS_PER_PAGE = settings.POSTS_PER_PAGE
@@ -124,10 +124,7 @@ def add_comment(request, post_id):
 @login_required
 def follow_index(request):
     post_list = Post.objects.filter(author__following__user=request.user)
-    title = 'Page to follow author'
-    context = {
-        'title': title,
-    }
+    context = {}
     context.update(get_page_context(post_list.all(), request))
     return render(request, 'posts/follow.html', context)
 
