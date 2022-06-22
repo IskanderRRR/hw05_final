@@ -78,4 +78,3 @@ class FollowViewsTests(TestCase):
         self.assertFalse(Follow.objects.filter(
             user=self.user_follower, author=self.user_follower
         ).exists())
-

@@ -67,7 +67,6 @@ class Comment(models.Model):
         return self.text[:15]
 
 
-
 class Follow(models.Model):
     user = models.ForeignKey(
         User,
