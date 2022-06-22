@@ -74,27 +74,8 @@ class FollowViewsTests(TestCase):
 
     def test_autorized_user_cant_follow_yourself(self):
         follow_count = Follow.objects.count()
-        response = (self.authorized_client.
-                    get(reverse('posts:profile_follow',
-                        kwargs={'username': self.user_follower.username})))
-        self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(Follow.objects.count(), follow_count)
         self.assertFalse(Follow.objects.filter(
             user=self.user_follower, author=self.user_follower
         ).exists())
 
-    def test_follow_index_for_not_follow(self):
-        author = self.user
-        self.authorized_client.get(reverse('posts:profile_follow',
-                                   kwargs={'username': author.username}))
-        response = (self.authorized_client.get(reverse('posts:follow_index')))
-        first_object = response.context['page_obj'][0]
-        self.assertEqual(first_object.text, self.post.text)
-        self.assertEqual(first_object.id, self.post.id)
-
-    def test_follow_index_for_unfollow(self):
-        author = self.user
-        self.authorized_client.get(reverse('posts:profile_unfollow',
-                                   kwargs={'username': author.username}))
-        response = (self.authorized_client.get(reverse('posts:follow_index')))
-        self.assertNotContains(response, self.post.text)

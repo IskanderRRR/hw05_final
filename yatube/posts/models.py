@@ -60,11 +60,12 @@ class Comment(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        ordering = ['-created']
+
     def __str__(self):
         return self.text[:15]
 
-    class Meta:
-        ordering = ['-created']
 
 
 class Follow(models.Model):
